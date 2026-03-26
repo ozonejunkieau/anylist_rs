@@ -77,7 +77,7 @@ impl AnyListClient {
             category_match_id: None,
             photo_ids: vec![],
             event_id: None,
-            store_ids,
+            store_ids: store_ids.clone(),
             prices: vec![],
             category_assignments: vec![],
             manual_sort_index: Some(0),
@@ -118,6 +118,7 @@ impl AnyListClient {
             category: category.map(|c| c.to_string()),
             user_id: Some(self.user_id()),
             product_upc: product_upc.map(|s| s.to_string()),
+            store_ids: store_ids.clone(),
         })
     }
 

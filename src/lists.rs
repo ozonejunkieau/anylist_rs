@@ -40,6 +40,7 @@ pub struct ListItem {
     pub(crate) category: Option<String>,
     pub(crate) user_id: Option<String>,
     pub(crate) product_upc: Option<String>,
+    pub(crate) store_ids: Vec<String>,
 }
 
 impl ListItem {
@@ -79,6 +80,10 @@ impl ListItem {
 
     pub fn product_upc(&self) -> Option<&str> {
         self.product_upc.as_deref()
+    }
+
+    pub fn store_ids(&self) -> &[String] {
+        &self.store_ids
     }
 }
 
@@ -325,6 +330,7 @@ fn transform_api_list_item(items: Vec<PbListItem>) -> Vec<ListItem> {
                 category: item.category,
                 user_id: item.user_id,
                 product_upc: item.product_upc,
+                store_ids: item.store_ids,
             };
             result.push(item);
         }

@@ -65,7 +65,7 @@ pub use error::{AnyListError, Result};
 pub use categories::{Category, CategoryGroup};
 pub use collections::RecipeCollection;
 pub use favourites::{FavouriteItem, FavouritesList};
-pub use lists::{List, ListItem};
+pub use lists::{List, ListItem, UserInfo};
 pub use meal_planning::MealPlanEvent;
 pub use icalendar::ICalendarInfo;
 pub use realtime::{ConnectionState, RealtimeSync, SyncEvent};
