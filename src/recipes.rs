@@ -810,6 +810,8 @@ impl AnyListClient {
                 quantity.as_deref(),
                 ingredient.note.as_deref(),
                 None,
+                None,
+                vec![],
             )
             .await?;
         }

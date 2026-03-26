@@ -11,7 +11,9 @@ async fn main() -> Result<()> {
         "Flour",
         Some("2 cups"),
         Some("For baking"),
-        Some("Baking")
+        Some("Baking"),
+        None,
+        vec![],
     ).await?;
 
     // Cross off (check) an item

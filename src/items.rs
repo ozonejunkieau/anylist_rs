@@ -32,7 +32,7 @@ impl AnyListClient {
     /// # }
     /// ```
     pub async fn add_item(&self, list_id: &str, name: &str) -> Result<ListItem> {
-        self.add_item_with_details(list_id, name, None, None, None)
+        self.add_item_with_details(list_id, name, None, None, None, None, vec![])
             .await
     }
 
@@ -45,6 +45,8 @@ impl AnyListClient {
     /// * `quantity` - Optional quantity (e.g., "2", "1 lb", "500g")
     /// * `details` - Optional additional details/notes
     /// * `category` - Optional category name
+    /// * `product_upc` - Optional product UPC/barcode
+    /// * `store_ids` - Store IDs to associate with the item
     pub async fn add_item_with_details(
         &self,
         list_id: &str,
@@ -52,6 +54,8 @@ impl AnyListClient {
         quantity: Option<&str>,
         details: Option<&str>,
         category: Option<&str>,
+        product_upc: Option<&str>,
+        store_ids: Vec<String>,
     ) -> Result<ListItem> {
         let item_id = generate_id();
         let operation_id = generate_id();
@@ -73,11 +77,11 @@ impl AnyListClient {
             category_match_id: None,
             photo_ids: vec![],
             event_id: None,
-            store_ids: vec![],
+            store_ids,
             prices: vec![],
             category_assignments: vec![],
             manual_sort_index: Some(0),
-            product_upc: None,
+            product_upc: product_upc.map(|s| s.to_string()),
         };
 
         let operation = PbListOperation {
@@ -113,7 +117,7 @@ impl AnyListClient {
             quantity: quantity.map(|q| q.to_string()),
             category: category.map(|c| c.to_string()),
             user_id: Some(self.user_id()),
-            product_upc: None,
+            product_upc: product_upc.map(|s| s.to_string()),
         })
     }
 

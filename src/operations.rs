@@ -540,7 +540,11 @@ pub struct AddFavouriteParams {
     pub operation_id: String,
     pub user_id: String,
     pub name: String,
+    pub quantity: Option<String>,
+    pub details: Option<String>,
     pub category: Option<String>,
+    pub product_upc: Option<String>,
+    pub store_ids: Vec<String>,
 }
 
 pub fn build_add_favourite_operation(params: AddFavouriteParams) -> PbStarterListOperationList {
@@ -549,8 +553,8 @@ pub fn build_add_favourite_operation(params: AddFavouriteParams) -> PbStarterLis
         server_mod_time: None,
         list_id: Some(params.list_id.clone()),
         name: Some(params.name),
-        quantity: None,
-        details: None,
+        quantity: params.quantity,
+        details: params.details,
         checked: None,
         recipe_id: None,
         raw_ingredient: None,
@@ -561,11 +565,11 @@ pub fn build_add_favourite_operation(params: AddFavouriteParams) -> PbStarterLis
         category_match_id: None,
         photo_ids: vec![],
         event_id: None,
-        store_ids: vec![],
+        store_ids: params.store_ids,
         manual_sort_index: None,
         prices: vec![],
         category_assignments: vec![],
-        product_upc: None,
+        product_upc: params.product_upc,
     };
 
     let operation = PbStarterListOperation {
@@ -864,7 +868,11 @@ mod tests {
             operation_id: "op-add-fav-1".to_string(),
             user_id: "user-789".to_string(),
             name: "Organic Milk".to_string(),
+            quantity: None,
+            details: None,
             category: Some("Dairy".to_string()),
+            product_upc: None,
+            store_ids: vec![],
         };
 
         let operation_list = build_add_favourite_operation(params);
@@ -882,7 +890,11 @@ mod tests {
             operation_id: "op-add-fav-2".to_string(),
             user_id: "user-xyz".to_string(),
             name: "Bananas".to_string(),
+            quantity: None,
+            details: None,
             category: None,
+            product_upc: None,
+            store_ids: vec![],
         };
 
         let operation_list = build_add_favourite_operation(params);

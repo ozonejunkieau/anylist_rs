@@ -26,7 +26,9 @@
 //!        "Apples",
 //!        Some("2 lbs"),
 //!        Some("Organic if possible"),
-//!        Some("Produce")
+//!        Some("Produce"),
+//!        None,
+//!        vec![],
 //!    ).await?;
 //!
 //!    Ok(())

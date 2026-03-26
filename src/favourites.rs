@@ -15,6 +15,8 @@ pub struct FavouriteItem {
     pub(crate) quantity: Option<String>,
     pub(crate) details: Option<String>,
     pub(crate) category: Option<String>,
+    pub(crate) product_upc: Option<String>,
+    pub(crate) store_ids: Vec<String>,
 }
 
 impl FavouriteItem {
@@ -40,6 +42,14 @@ impl FavouriteItem {
 
     pub fn category(&self) -> Option<&str> {
         self.category.as_deref()
+    }
+
+    pub fn product_upc(&self) -> Option<&str> {
+        self.product_upc.as_deref()
+    }
+
+    pub fn store_ids(&self) -> &[String] {
+        &self.store_ids
     }
 }
 
@@ -164,7 +174,7 @@ impl AnyListClient {
             .first()
             .ok_or_else(|| AnyListError::NotFound("No favourites list found".to_string()))?;
 
-        self.add_favourite_to_list(&list.id, name, category).await
+        self.add_favourite_to_list(&list.id, name, None, None, category, None, vec![]).await
     }
 
     /// Add a favourite item to a specific favourites list
@@ -178,7 +188,11 @@ impl AnyListClient {
         &self,
         list_id: &str,
         name: &str,
+        quantity: Option<&str>,
+        details: Option<&str>,
         category: Option<&str>,
+        product_upc: Option<&str>,
+        store_ids: Vec<String>,
     ) -> Result<FavouriteItem> {
         let item_id = generate_id();
         let operation_id = generate_id();
@@ -189,7 +203,11 @@ impl AnyListClient {
             operation_id,
             user_id: self.user_id(),
             name: name.to_string(),
+            quantity: quantity.map(|s| s.to_string()),
+            details: details.map(|s| s.to_string()),
             category: category.map(|c| c.to_string()),
+            product_upc: product_upc.map(|s| s.to_string()),
+            store_ids: store_ids.clone(),
         };
 
         let operation_list = crate::operations::build_add_favourite_operation(params);
@@ -205,9 +223,11 @@ impl AnyListClient {
             id: item_id,
             list_id: list_id.to_string(),
             name: name.to_string(),
-            quantity: None,
-            details: None,
+            quantity: quantity.map(|s| s.to_string()),
+            details: details.map(|s| s.to_string()),
             category: category.map(|c| c.to_string()),
+            product_upc: product_upc.map(|s| s.to_string()),
+            store_ids,
         })
     }
 
@@ -257,6 +277,8 @@ impl AnyListClient {
             favourite.quantity.as_deref(),
             favourite.details.as_deref(),
             favourite.category.as_deref(),
+            favourite.product_upc.as_deref(),
+            favourite.store_ids.clone(),
         )
         .await
     }
@@ -294,6 +316,8 @@ fn transform_favourite_items(items: &[PbListItem], list_id: &str) -> Vec<Favouri
                 quantity: item.quantity.clone(),
                 details: item.details.clone(),
                 category: item.category.clone(),
+                product_upc: item.product_upc.clone(),
+                store_ids: item.store_ids.clone(),
             })
         })
         .collect()
@@ -338,6 +362,8 @@ mod tests {
             quantity: Some("2 lbs".to_string()),
             details: Some("Honeycrisp preferred".to_string()),
             category: Some("Produce".to_string()),
+            product_upc: Some("012345678901".to_string()),
+            store_ids: vec!["store-a".to_string(), "store-b".to_string()],
             ..Default::default()
         }];
 
@@ -351,5 +377,7 @@ mod tests {
         assert_eq!(item.quantity, Some("2 lbs".to_string()));
         assert_eq!(item.details, Some("Honeycrisp preferred".to_string()));
         assert_eq!(item.category, Some("Produce".to_string()));
+        assert_eq!(item.product_upc, Some("012345678901".to_string()));
+        assert_eq!(item.store_ids, vec!["store-a".to_string(), "store-b".to_string()]);
     }
 }
