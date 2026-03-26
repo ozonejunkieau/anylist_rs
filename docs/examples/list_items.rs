@@ -27,7 +27,8 @@ async fn main() -> Result<()> {
         "Whole Wheat Flour",
         Some("3 cups"),
         Some("Organic"),
-        Some("Baking")
+        Some("Baking"),
+        None,
     ).await?;
 
     // Delete a specific item

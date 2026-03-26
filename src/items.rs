@@ -127,6 +127,7 @@ impl AnyListClient {
     /// * `quantity` - Optional new quantity
     /// * `details` - Optional new details
     /// * `category` - Optional new category
+    /// * `product_upc` - Optional product UPC/barcode; pass `Some("")` or `None` to clear
     pub async fn update_item(
         &self,
         list_id: &str,
@@ -135,6 +136,7 @@ impl AnyListClient {
         quantity: Option<&str>,
         details: Option<&str>,
         category: Option<&str>,
+        product_upc: Option<&str>,
     ) -> Result<()> {
         let operation_id = generate_id();
 
@@ -159,7 +161,7 @@ impl AnyListClient {
             prices: vec![],
             category_assignments: vec![],
             manual_sort_index: Some(0),
-            product_upc: None,
+            product_upc: product_upc.map(|s| s.to_string()),
         };
 
         let operation = PbListOperation {
