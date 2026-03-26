@@ -168,13 +168,35 @@ impl AnyListClient {
     /// # }
     /// ```
     pub async fn add_favourite(&self, name: &str, category: Option<&str>) -> Result<FavouriteItem> {
-        // Get the first favourites list, or return an error if none exists
+        self.add_favourite_with_details(name, None, None, category, None, vec![]).await
+    }
+
+    /// Add a favourite item to the default favourites list with additional details
+    ///
+    /// # Arguments
+    ///
+    /// * `name` - The name of the item to add as favourite
+    /// * `quantity` - Optional quantity
+    /// * `details` - Optional additional details/notes
+    /// * `category` - Optional category for the item
+    /// * `product_upc` - Optional product UPC/barcode
+    /// * `store_ids` - Store IDs to associate with the item
+    pub async fn add_favourite_with_details(
+        &self,
+        name: &str,
+        quantity: Option<&str>,
+        details: Option<&str>,
+        category: Option<&str>,
+        product_upc: Option<&str>,
+        store_ids: Vec<String>,
+    ) -> Result<FavouriteItem> {
         let lists = self.get_favourites_lists().await?;
         let list = lists
             .first()
             .ok_or_else(|| AnyListError::NotFound("No favourites list found".to_string()))?;
 
-        self.add_favourite_to_list(&list.id, name, None, None, category, None, vec![]).await
+        self.add_favourite_to_list(&list.id, name, quantity, details, category, product_upc, store_ids)
+            .await
     }
 
     /// Add a favourite item to a specific favourites list
@@ -183,7 +205,11 @@ impl AnyListClient {
     ///
     /// * `list_id` - The ID of the favourites list
     /// * `name` - The name of the item to add
+    /// * `quantity` - Optional quantity
+    /// * `details` - Optional additional details/notes
     /// * `category` - Optional category for the item
+    /// * `product_upc` - Optional product UPC/barcode
+    /// * `store_ids` - Store IDs to associate with the item
     pub async fn add_favourite_to_list(
         &self,
         list_id: &str,
